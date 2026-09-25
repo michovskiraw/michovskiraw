@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="410" viewBox="0 0 760 410">
+
+    <style>
+      .bg { fill: #0d1117; }
+      .title { fill: #58a6ff; font: 600 17px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+      .text { fill: #c9d1d9; font: 600 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+      .muted { fill: #8b949e; font: 12px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+      .line { stroke: #21262d; stroke-width: 1; }
+      .dot { fill: #58a6ff; }
+      @media (prefers-color-scheme: light) {
+        .bg { fill: #ffffff; }
+        .title { fill: #0969da; }
+        .text { fill: #24292f; }
+        .muted { fill: #57606a; }
+        .line { stroke: #d8dee4; }
+        .dot { fill: #0969da; }
+      }
+    </style>
+    
+<rect class="bg" x="0" y="0" width="760" height="410" rx="14"/>
+<text class="title" x="24" y="34">Recent public activity</text>
+<line class="line" x1="24" y1="48" x2="736" y2="48"/>
+<circle class="dot" cx="31" cy="74" r="4"/>
+<text class="text" x="48" y="78">Pushed 0 commits to michovskiraw</text>
+<text class="muted" x="48" y="98">25 Sep 2026 · 17:59 UTC</text>
+<circle class="dot" cx="31" cy="128" r="4"/>
+<text class="text" x="48" y="132">Pushed 0 commits to issueflow</text>
+<text class="muted" x="48" y="152">25 Sep 2026 · 17:26 UTC</text>
+<circle class="dot" cx="31" cy="182" r="4"/>
+<text class="text" x="48" y="186">Pushed 0 commits to statuslite</text>
+<text class="muted" x="48" y="206">25 Sep 2026 · 16:40 UTC</text>
+<circle class="dot" cx="31" cy="236" r="4"/>
+<text class="text" x="48" y="240">Pushed 0 commits to dropzone</text>
+<text class="muted" x="48" y="260">25 Sep 2026 · 16:41 UTC</text>
+<circle class="dot" cx="31" cy="290" r="4"/>
+<text class="text" x="48" y="294">Pushed 0 commits to routewise</text>
+<text class="muted" x="48" y="314">25 Sep 2026 · 16:41 UTC</text>
+<circle class="dot" cx="31" cy="344" r="4"/>
+<text class="text" x="48" y="348">Created branch main in routewise</text>
+<text class="muted" x="48" y="368">25 Sep 2026 · 15:50 UTC</text>
+</svg>
