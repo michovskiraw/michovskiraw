@@ -36,19 +36,3 @@ jobs:
           plugin_languages_limit: 6
           plugin_languages_details: percentage
           config_timezone: Europe/Warsaw
-
-      - name: Recent activity
-        uses: lowlighter/metrics@latest
-        with:
-          filename: metrics-activity.svg
-          token: ${{ secrets.METRICS_TOKEN }}
-          committer_token: ${{ secrets.GITHUB_TOKEN }}
-          user: michovskiraw
-          template: classic
-          base: ""
-          plugin_activity: yes
-          plugin_activity_limit: 5
-          plugin_activity_days: 30
-          plugin_activity_filter: push, issue, pr, release, ref/create
-          plugin_activity_timestamps: yes
-          config_timezone: Europe/Warsaw
