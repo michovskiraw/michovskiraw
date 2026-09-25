@@ -128,7 +128,7 @@ Issue-tracking REST API with SQLite persistence, CRUD endpoints and a web dashbo
 <br/>
 
 <div align="center">
-  <img src="./metrics-activity.svg" alt="Recent GitHub activity" />
+  <img src="./activity.svg" alt="Recent GitHub activity" />
 </div>
 
 <br/>
