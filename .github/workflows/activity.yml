@@ -1,0 +1,164 @@
+name: generate recent activity
+
+on:
+  schedule:
+    - cron: "35 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  activity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate activity SVG from GitHub public events
+        shell: python
+        run: |
+          import datetime
+          import html
+          import json
+          import urllib.request
+
+          USER = "michovskiraw"
+          URL = f"https://api.github.com/users/{USER}/events/public?per_page=30"
+
+          req = urllib.request.Request(
+              URL,
+              headers={
+                  "Accept": "application/vnd.github+json",
+                  "User-Agent": "michovskiraw-profile-action",
+              },
+          )
+
+          with urllib.request.urlopen(req, timeout=20) as response:
+              events = json.load(response)
+
+          def short_repo(event):
+              return event.get("repo", {}).get("name", "").split("/", 1)[-1] or "repository"
+
+          def describe(event):
+              event_type = event.get("type", "")
+              payload = event.get("payload", {})
+              repo = short_repo(event)
+
+              if event_type == "PushEvent":
+                  count = len(payload.get("commits", []))
+                  word = "commit" if count == 1 else "commits"
+                  return f"Pushed {count} {word} to {repo}"
+
+              if event_type == "CreateEvent":
+                  ref_type = payload.get("ref_type", "ref")
+                  ref = payload.get("ref")
+                  if ref:
+                      return f"Created {ref_type} {ref} in {repo}"
+                  return f"Created {ref_type} in {repo}"
+
+              if event_type == "IssuesEvent":
+                  action = payload.get("action", "updated")
+                  issue = payload.get("issue", {})
+                  number = issue.get("number")
+                  return f"{action.capitalize()} issue #{number} in {repo}" if number else f"{action.capitalize()} an issue in {repo}"
+
+              if event_type == "PullRequestEvent":
+                  action = payload.get("action", "updated")
+                  pr = payload.get("pull_request", {})
+                  number = pr.get("number")
+                  return f"{action.capitalize()} PR #{number} in {repo}" if number else f"{action.capitalize()} a pull request in {repo}"
+
+              if event_type == "ReleaseEvent":
+                  action = payload.get("action", "published")
+                  release = payload.get("release", {})
+                  tag = release.get("tag_name", "")
+                  return f"{action.capitalize()} release {tag} in {repo}".strip()
+
+              if event_type == "WatchEvent":
+                  return f"Starred {event.get('repo', {}).get('name', repo)}"
+
+              if event_type == "ForkEvent":
+                  return f"Forked {event.get('repo', {}).get('name', repo)}"
+
+              return None
+
+          rows = []
+          seen = set()
+
+          for event in events:
+              message = describe(event)
+              if not message:
+                  continue
+
+              created = event.get("created_at", "")
+              key = (message, created[:10])
+              if key in seen:
+                  continue
+              seen.add(key)
+
+              try:
+                  dt = datetime.datetime.fromisoformat(created.replace("Z", "+00:00"))
+                  when = dt.strftime("%d %b %Y · %H:%M UTC")
+              except Exception:
+                  when = created
+
+              rows.append((message, when))
+              if len(rows) == 6:
+                  break
+
+          if not rows:
+              rows = [("No recent public activity yet.", "")]
+
+          width = 760
+          top = 56
+          row_h = 54
+          height = top + len(rows) * row_h + 30
+
+          parts = [
+              f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
+              """
+              <style>
+                .bg { fill: #0d1117; }
+                .title { fill: #58a6ff; font: 600 17px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+                .text { fill: #c9d1d9; font: 600 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+                .muted { fill: #8b949e; font: 12px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+                .line { stroke: #21262d; stroke-width: 1; }
+                .dot { fill: #58a6ff; }
+                @media (prefers-color-scheme: light) {
+                  .bg { fill: #ffffff; }
+                  .title { fill: #0969da; }
+                  .text { fill: #24292f; }
+                  .muted { fill: #57606a; }
+                  .line { stroke: #d8dee4; }
+                  .dot { fill: #0969da; }
+                }
+              </style>
+              """,
+              f'<rect class="bg" x="0" y="0" width="{width}" height="{height}" rx="14"/>',
+              '<text class="title" x="24" y="34">Recent public activity</text>',
+              f'<line class="line" x1="24" y1="48" x2="{width-24}" y2="48"/>',
+          ]
+
+          y = 78
+          for message, when in rows:
+              safe_message = html.escape(message)
+              safe_when = html.escape(when)
+              parts.append(f'<circle class="dot" cx="31" cy="{y-4}" r="4"/>')
+              parts.append(f'<text class="text" x="48" y="{y}">{safe_message}</text>')
+              if safe_when:
+                  parts.append(f'<text class="muted" x="48" y="{y+20}">{safe_when}</text>')
+              y += row_h
+
+          parts.append("</svg>")
+
+          with open("activity.svg", "w", encoding="utf-8") as f:
+              f.write("\n".join(parts))
+
+      - name: Commit updated activity SVG
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add activity.svg
+          git diff --cached --quiet && exit 0
+          git commit -m "Update activity.svg [skip ci]"
+          git push
