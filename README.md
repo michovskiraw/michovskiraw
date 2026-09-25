@@ -116,9 +116,9 @@ Issue-tracking REST API with SQLite persistence, CRUD endpoints and a web dashbo
 <div align="center">
   <img src="https://streak-stats.demolab.com?user=michovskiraw&theme=tokyonight&hide_border=true" />
   <br/><br/>
-  <img src="https://github-readme-stats.vercel.app/api?username=michovskiraw&show_icons=true&theme=tokyonight&hide_border=true&rank_icon=github" />
+  <img src="./metrics-stats.svg" alt="GitHub metrics" />
   <br/><br/>
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=michovskiraw&layout=compact&theme=tokyonight&hide_border=true" />
+  <img src="./metrics-languages.svg" alt="Top languages" />
 </div>
 
 <br/>
@@ -128,7 +128,7 @@ Issue-tracking REST API with SQLite persistence, CRUD endpoints and a web dashbo
 <br/>
 
 <div align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=michovskiraw&theme=tokyo-night&hide_border=true&area=true" />
+  <img src="./metrics-activity.svg" alt="Recent GitHub activity" />
 </div>
 
 <br/>
